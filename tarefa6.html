@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tarefa 6</title>
+</head>
+
+<body>
+
+    <div class="row">
+        <form id="form">
+            <div class="col-md-8">
+                <label for="input" class="form-label">Nome:</label>
+                <input type="text" class="form-control" id="nome">
+                
+                <label for="input" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email">
+                
+                <label for="input" class="form-label">Telefone:</label>
+                <input type="text" class="form-control" required placeholder="(00) 00000-0000" maxlength="11" id="telefone"> 
+            
+                <button type="button" class="btn btn-primary m-3" onclick="AdicionarUser()">Salvar </button>
+                <button type="button" class="btn btn-primary m-2" onclick="Sincronizar()">Sincronizar</button>
+            </div>  
+        </form>
+    </div> 
+        <div class="table-responsive">
+            <table class="table table-primary">
+                <thead>
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Telefone</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+            </table>
+        </div>
+
+    <script>
+        
+    function Usuario(nome, email, telefone) {
+    this.nome = nome;
+    this.email = email;
+    this.telefone = telefone;
+}
+
+var users = new Array()
+
+function AdicionarUser() {
+    let nome = document.getElementById('nome').value
+    let email = document.getElementById('email').value
+    let telefone = document.getElementById('telefone').value
+
+    let user = new Usuario(nome, email, telefone)
+
+    users.push(user)
+    Atualizar()
+}
+
+function Atualizar() {
+    tbody.innerHTML = ''
+    for (let i = 0; i < users.length; i++) {
+
+        var tr = document.createElement('tr')
+        var td1 = document.createElement('td')
+        var td2 = document.createElement('td')
+        var td3 = document.createElement('td')
+
+        var nometxt = document.createTextNode(users[i].nome)
+        var emailtxt = document.createTextNode(users[i].email)
+        var telefonetxt = document.createTextNode(users[i].telefone)
+
+        td1.appendChild(nometxt)
+        td2.appendChild(emailtxt)
+        td3.appendChild(telefonetxt)
+        tr.appendChild(td1)
+        tr.appendChild(td2)
+        tr.appendChild(td3)
+
+        tbody.appendChild(tr)
+        document.getElementById('nome').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('telefone').value = '';
+        
+    }
+}
+
+function atualizarTabela() {
+    var tbody = document.getElementById('tbody')
+    var qtdeLinhas = 0
+    tbody.innerHTML = ''
+}
+
+function Sincronizar() {    
+    users.forEach(function (api) {
+        fetch('https://63055f7d697408f7edc56873.mockapi.io/Usuario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(api)
+        }).then((response) => response.json())
+        .then((data) => {
+            alert('Salvo com sucesso!');
+            atualizarTabela();
+            location.reload();
+        })
+        .catch((error) => {
+            alert('Ocorreu um erro ao salvar ):');
+        })
+    })
+}
+    </script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-beta1/css/bootstrap.min.css" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+
+  
+</body>
+
+</html>
